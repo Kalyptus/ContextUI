@@ -158,6 +158,7 @@ Citizen.CreateThread(function()
             else
                 ContextUI:Visible()
             end
+            DisablePlayerFiring(PlayerPedId(), true)
             Timer = 1;
         elseif (ContextUI.Entity.ID ~= nil) then
             ContextUI:OnClosed()
