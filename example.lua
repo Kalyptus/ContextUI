@@ -8,7 +8,7 @@
 --EntityType 2 = Vehicle
 --EntityType 3 = Object
 
-local main = ContextUI:CreateMenu(1)
+local main = ContextUI:CreateMenu(1, "Example title")
 local submenu = ContextUI:CreateSubMenu(main)
 
 ContextUI:IsVisible(main, function(Entity)
@@ -16,6 +16,7 @@ ContextUI:IsVisible(main, function(Entity)
         ContextUI:Button("Button #"..i, function(onSelected)
             if (onSelected) then
                 print("onSelected #"..i)
+                submenu.Title = "Button #"..i
             end
         end, submenu)
     end
@@ -31,6 +32,7 @@ ContextUI:IsVisible(submenu, function(Entity)
     end
 end)
 
-Keys.Register("X", "X", "Enable / disable focus mode.", function()
+--LMENU => LEFT ALT
+Keys.Register("LMENU", "LMENU", "Enable / disable focus mode.", function()
     ContextUI.Focus = not ContextUI.Focus;
 end)

@@ -9,23 +9,27 @@ local Settings = {
         Width = 220,
         Height = 32,
         Background = {
-            { 0, 0, 0, 200 },
-            { 255, 255, 255, 200 }
+            { 0, 0, 0, 180 },
+            { 240, 240, 240, 255 }
         }
     },
     Text = {
         Colors = {
             { 255, 255, 255, 255 },
-            { 10, 10, 10, 255 }
+            { 5, 5, 5, 255 }
         },
         X = 8.0,
         Y = 4.5,
         Scale = 0.26,
         Font = 0,
-        Center = false,
+        Center = 0,
         Outline = false,
         DropShadow = false,
     },
+    Title = {
+        Background = { 25, 80, 150, 240 },
+        Text = { 255, 255, 255, 255 }
+    }
 }
 
 ContextUI = {
@@ -52,6 +56,15 @@ function ContextUI:OnClosed()
     self.Focus = false
     self.Category = "main"
     self.Options = 0
+end
+
+local function AddTitle(Label)
+    local PosX, PosY = ContextUI.Position.x, ContextUI.Position.y
+    PosY = PosY + (ContextUI.Options * Settings.Button.Height)
+    Graphics.Rectangle(PosX, PosY, Settings.Button.Width, Settings.Button.Height, Settings.Title.Background[1], Settings.Title.Background[2], Settings.Title.Background[3], Settings.Title.Background[4])
+    Graphics.Text(Label, PosX + 110, PosY + 4.0, Settings.Text.Font, 0.28, Settings.Title.Text[1], Settings.Title.Text[2], Settings.Title.Text[3], Settings.Title.Text[4], 1, false, false)
+    ContextUI.Options = ContextUI.Options + 1
+    ContextUI.Offset = vector2(PosX, PosY)
 end
 
 function ContextUI:Button(Label, Actions, Submenu)
@@ -96,18 +109,21 @@ function ContextUI:Visible()
     self.Options = 0
 end
 
-function ContextUI:CreateMenu(EntityType)
-    return { EntityType = EntityType, Category = "main", Parent = nil, }
+function ContextUI:CreateMenu(EntityType, Title)
+    return { EntityType = EntityType, Category = "main", Parent = nil, Title = Title }
 end
 
-function ContextUI:CreateSubMenu(Parent)
+function ContextUI:CreateSubMenu(Parent, Title)
     local category = self.CategoryID + 1
     self.CategoryID = category;
-    return { EntityType = Parent.EntityType, Category = category, Parent = Parent }
+    return { EntityType = Parent.EntityType, Category = category, Parent = Parent, Title = Title }
 end
 
 function ContextUI:IsVisible(Menu, Callback)
     self.Menus[Menu.EntityType .. Menu.Category] = function()
+        if (Menu.Title) then
+            AddTitle(Menu.Title)
+        end
         Callback(self.Entity)
         if Menu.Parent then
             self:Button("← Retour", nil, Menu.Parent)
