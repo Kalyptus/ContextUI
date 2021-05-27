@@ -47,6 +47,7 @@ ContextUI = {
     Options = 0,
     Category = "main",
     CategoryID = 0,
+    Description = nil,
 }
 
 function ContextUI:OnClosed()
@@ -58,7 +59,7 @@ function ContextUI:OnClosed()
     self.Options = 0
 end
 
-local function AddTitle(Label)
+local function ShowTitle(Label)
     local PosX, PosY = ContextUI.Position.x, ContextUI.Position.y
     PosY = PosY + (ContextUI.Options * Settings.Button.Height)
     Graphics.Rectangle(PosX, PosY, Settings.Button.Width, Settings.Button.Height, Settings.Title.Background[1], Settings.Title.Background[2], Settings.Title.Background[3], Settings.Title.Background[4])
@@ -67,7 +68,17 @@ local function AddTitle(Label)
     ContextUI.Offset = vector2(PosX, PosY)
 end
 
-function ContextUI:Button(Label, Actions, Submenu)
+local function ShowDescription(Description)
+    local PosX, PosY = ContextUI.Position.x, ContextUI.Position.y
+    PosY = PosY + (ContextUI.Options * Settings.Button.Height)
+    local GetLineCount = Graphics.GetLineCount(Description, PosX + 110, PosY, Settings.Text.Font, 0.24, Settings.Title.Text[1], Settings.Title.Text[2], Settings.Title.Text[3], Settings.Title.Text[4], 1, false, false, 215)
+    Graphics.Rectangle(PosX, PosY, Settings.Button.Width, 2, Settings.Title.Background[1], Settings.Title.Background[2], Settings.Title.Background[3], Settings.Title.Background[4])
+    Graphics.Rectangle(PosX, PosY + 2, Settings.Button.Width, 1 + (GetLineCount * 17.5), 0, 0, 0, 160)
+    Graphics.Text(Description, PosX + 110, PosY, Settings.Text.Font, 0.24, Settings.Title.Text[1], Settings.Title.Text[2], Settings.Title.Text[3], Settings.Title.Text[4], 1, false, false, 215)
+    ContextUI.Offset = vector2(PosX, PosY + 3 +(GetLineCount * 17.5))
+end
+
+function ContextUI:Button(Label, Description, Actions, Submenu)
     local PosX, PosY = self.Position.x, self.Position.y
     PosY = PosY + (self.Options * Settings.Button.Height)
     local onHovered = Graphics.IsMouseInBounds(PosX, PosY, Settings.Button.Width, Settings.Button.Height)
@@ -86,6 +97,7 @@ function ContextUI:Button(Label, Actions, Submenu)
         if (Actions) then
             Actions(Selected)
         end
+        self.Description = Description
     end
 
     local Index = (not onHovered) and 1 or 2
@@ -100,13 +112,14 @@ function ContextUI:Visible()
     self.Menus[self.Entity.Type .. self.Category]()
     local X, Y = 1920, 1080
     local lastX, lastY = self.Offset.x, self.Offset.y
-    if (lastY + Settings.Button.Height) >= Y then
+    if (lastY + (not self.Description and Settings.Button.Height or 0)) >= Y then
         self.Position = vector2(self.Position.x, self.Position.y - 10.0)
     end
-    if (lastX + Settings.Button.Width) >= X then
+    if (lastX + (not self.Description and Settings.Button.Height or 0)) >= X then
         self.Position = vector2(self.Position.x - 10.0, self.Position.y)
     end
-    self.Options = 0
+    self.Options = 0;
+    self.Description = nil;
 end
 
 function ContextUI:CreateMenu(EntityType, Title)
@@ -122,11 +135,14 @@ end
 function ContextUI:IsVisible(Menu, Callback)
     self.Menus[Menu.EntityType .. Menu.Category] = function()
         if (Menu.Title) then
-            AddTitle(Menu.Title)
+            ShowTitle(Menu.Title)
         end
         Callback(self.Entity)
         if Menu.Parent then
-            self:Button("← Retour", nil, Menu.Parent)
+            self:Button("← Retour", nil, nil, Menu.Parent)
+        end
+        if (self.Description) then
+            ShowDescription(self.Description)
         end
     end
 end

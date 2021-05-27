@@ -13,7 +13,7 @@ local submenu = ContextUI:CreateSubMenu(main)
 
 ContextUI:IsVisible(main, function(Entity)
     for i=1, 10 do
-        ContextUI:Button("Button #"..i, function(onSelected)
+        ContextUI:Button("Button #"..i, nil, function(onSelected)
             if (onSelected) then
                 print("onSelected #"..i)
                 submenu.Title = "Button #"..i
@@ -24,7 +24,7 @@ end)
 
 ContextUI:IsVisible(submenu, function(Entity)
     for k, v in pairs(Entity) do
-        ContextUI:Button(k, function(onSelected)
+        ContextUI:Button(k, v, function(onSelected)
             if onSelected then
                 print(v)
             end
