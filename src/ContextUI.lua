@@ -115,7 +115,7 @@ function ContextUI:Visible()
     if (lastY + (not self.Description and Settings.Button.Height or 0)) >= Y then
         self.Position = vector2(self.Position.x, self.Position.y - 10.0)
     end
-    if (lastX + (not self.Description and Settings.Button.Height or 0)) >= X then
+    if (lastX + Settings.Button.Width) >= X then
         self.Position = vector2(self.Position.x - 10.0, self.Position.y)
     end
     self.Options = 0;
