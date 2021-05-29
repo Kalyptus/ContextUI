@@ -38,6 +38,7 @@ ContextUI = {
         Type = nil,
         Model = nil,
         NetID = nil,
+        ServerID = nil,
     },
     Menus = {},
     Focus = false,
@@ -174,7 +175,8 @@ Citizen.CreateThread(function()
                                 ID = entityHit,
                                 Type = entityType,
                                 Model = GetEntityModel(entityHit) or 0,
-                                NetID = NetworkGetNetworkIdFromEntity(entityHit)
+                                NetID = NetworkGetNetworkIdFromEntity(entityHit),
+                                ServerID = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entityHit))
                             }
                             ContextUI.Open = true
                             Audio.PlaySound("HUD_FRONTEND_DEFAULT_SOUNDSET", "SELECT", false)
