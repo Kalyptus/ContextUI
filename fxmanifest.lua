@@ -6,14 +6,9 @@
 
 fx_version 'cerulean'
 
-games { 'gta5' };
+games { 'gta5' }
 
 client_scripts {
-	"src/components/*.lua",
-	"src/ContextUI.lua",
-	"example.lua"
+    'src/components/*.lua',
+    'src/ContextUI.lua',
 }
-
-
-
-
